@@ -38,10 +38,10 @@
         let paddleRightY = (canvas.height - paddleHeight) / 2;
         let ballX = canvas.width / 2, ballY = canvas.height / 2;
         let ballSpeedX = 5, ballSpeedY = 3;
-        let touchY = null;
         let fireParticles = [];
         let xp = 0;
         let level = 1;
+        let upPressed = false, downPressed = false;
 
         function drawRect(x, y, width, height, color) {
             ctx.fillStyle = color;
@@ -56,9 +56,8 @@
         }
 
         function update() {
-            if (touchY !== null) {
-                paddleLeftY = touchY - paddleHeight / 2;
-            }
+            if (upPressed) paddleLeftY -= 5;
+            if (downPressed) paddleLeftY += 5;
             
             if (paddleLeftY < 0) paddleLeftY = 0;
             if (paddleLeftY > canvas.height - paddleHeight) paddleLeftY = canvas.height - paddleHeight;
@@ -134,10 +133,22 @@
             requestAnimationFrame(gameLoop);
         }
 
+        // Touchscreen besturing
         canvas.addEventListener("touchmove", (e) => {
             const touch = e.touches[0];
             const rect = canvas.getBoundingClientRect();
-            touchY = touch.clientY - rect.top;
+            paddleLeftY = touch.clientY - rect.top - paddleHeight / 2;
+        });
+
+        // Keyboard besturing
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowUp") upPressed = true;
+            if (e.key === "ArrowDown") downPressed = true;
+        });
+
+        window.addEventListener("keyup", (e) => {
+            if (e.key === "ArrowUp") upPressed = false;
+            if (e.key === "ArrowDown") downPressed = false;
         });
 
         gameLoop();
