@@ -19,22 +19,29 @@
             max-width: 100%;
             height: auto;
         }
+        #stats {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
-    <h1>Pong Game - Fuck DIGGY! ❤️</h1>
+    <h1>Pong Game - Epic RPG Edition</h1>
+    <div id="stats">Level: <span id="level">1</span> | XP: <span id="xp">0</span></div>
     <canvas id="gameCanvas" width="800" height="400"></canvas>
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
 
-        const paddleWidth = 10, paddleHeight = 80;
+        const paddleWidth = 10, paddleHeightBase = 80;
+        let paddleHeight = paddleHeightBase;
         let paddleLeftY = (canvas.height - paddleHeight) / 2;
         let paddleRightY = (canvas.height - paddleHeight) / 2;
         let ballX = canvas.width / 2, ballY = canvas.height / 2;
         let ballSpeedX = 5, ballSpeedY = 3;
         let touchY = null;
         let fireParticles = [];
+        let xp = 0;
+        let level = 1;
 
         function drawRect(x, y, width, height, color) {
             ctx.fillStyle = color;
@@ -61,8 +68,13 @@
             
             if (ballY < 0 || ballY > canvas.height) ballSpeedY = -ballSpeedY;
             
-            if (ballX < 20 && ballY > paddleLeftY && ballY < paddleLeftY + paddleHeight) ballSpeedX = -ballSpeedX;
-            if (ballX > canvas.width - 20 && ballY > paddleRightY && ballY < paddleRightY + paddleHeight) ballSpeedX = -ballSpeedX;
+            if (ballX < 20 && ballY > paddleLeftY && ballY < paddleLeftY + paddleHeight) {
+                ballSpeedX = -ballSpeedX;
+                gainXP(10);
+            }
+            if (ballX > canvas.width - 20 && ballY > paddleRightY && ballY < paddleRightY + paddleHeight) {
+                ballSpeedX = -ballSpeedX;
+            }
             
             if (ballX < 0 || ballX > canvas.width) {
                 ballX = canvas.width / 2;
@@ -99,6 +111,21 @@
             });
             
             drawCircle(ballX, ballY, 10, "white");
+        }
+
+        function gainXP(amount) {
+            xp += amount;
+            if (xp >= level * 50) {
+                levelUp();
+            }
+            document.getElementById("xp").textContent = xp;
+        }
+
+        function levelUp() {
+            level++;
+            xp = 0;
+            paddleHeight += 10;
+            document.getElementById("level").textContent = level;
         }
 
         function gameLoop() {
