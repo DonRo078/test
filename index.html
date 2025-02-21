@@ -30,7 +30,7 @@
         let paddleRightY = (canvas.height - paddleHeight) / 2;
         let ballX = canvas.width / 2, ballY = canvas.height / 2;
         let ballSpeedX = 5, ballSpeedY = 3;
-        let leftPaddleSpeed = 0, rightPaddleSpeed = 0;
+        let leftPaddleSpeed = 0;
 
         function drawRect(x, y, width, height, color) {
             ctx.fillStyle = color;
@@ -46,12 +46,9 @@
 
         function update() {
             paddleLeftY += leftPaddleSpeed;
-            paddleRightY += rightPaddleSpeed;
             
             if (paddleLeftY < 0) paddleLeftY = 0;
             if (paddleLeftY > canvas.height - paddleHeight) paddleLeftY = canvas.height - paddleHeight;
-            if (paddleRightY < 0) paddleRightY = 0;
-            if (paddleRightY > canvas.height - paddleHeight) paddleRightY = canvas.height - paddleHeight;
             
             ballX += ballSpeedX;
             ballY += ballSpeedY;
@@ -66,6 +63,16 @@
                 ballY = canvas.height / 2;
                 ballSpeedX = -ballSpeedX;
             }
+            
+            // Simpele AI voor de rechter paddle
+            if (paddleRightY + paddleHeight / 2 < ballY) {
+                paddleRightY += 4;
+            } else {
+                paddleRightY -= 4;
+            }
+            
+            if (paddleRightY < 0) paddleRightY = 0;
+            if (paddleRightY > canvas.height - paddleHeight) paddleRightY = canvas.height - paddleHeight;
         }
 
         function draw() {
@@ -84,13 +91,10 @@
         window.addEventListener("keydown", (e) => {
             if (e.key === "w") leftPaddleSpeed = -5;
             if (e.key === "s") leftPaddleSpeed = 5;
-            if (e.key === "p") rightPaddleSpeed = -5;
-            if (e.key === "l") rightPaddleSpeed = 5;
         });
 
         window.addEventListener("keyup", (e) => {
             if (e.key === "w" || e.key === "s") leftPaddleSpeed = 0;
-            if (e.key === "p" || e.key === "l") rightPaddleSpeed = 0;
         });
 
         gameLoop();
