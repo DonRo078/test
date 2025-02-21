@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pong Game / fuck diggy </title>
+  <title>Pong Game met RPG Elementen</title>
   <style>
     body { 
       margin: 0;
@@ -46,11 +46,15 @@
     let opponentY = (canvas.height - paddleHeight) / 2;
     let ballX = canvas.width / 2;
     let ballY = canvas.height / 2;
-    let ballSpeedX = 5;
-    let ballSpeedY = 3;
+
+    // Default speed values
+    const defaultBallSpeedX = 4.5;
+    const defaultBallSpeedY = 3.0;
+    let ballSpeedX = defaultBallSpeedX; // Initial speed
+    let ballSpeedY = defaultBallSpeedY; // Initial speed
 
     let playerSpeed = 6;
-    let opponentSpeed = 4.8;
+    let opponentSpeed = 5; // Increased speed for opponent
     let playerDirection = 0;
 
     // Trail effect storage
@@ -142,6 +146,9 @@
         playerXP = 0; // Reset XP after level up
         playerLevel += 1; // Increase level
         xpThreshold = 20; // Set XP threshold back to 20 (you can change this if you want)
+
+        // Set the level-up message to "you fucked diggy" when the player levels up
+        levelUpText = "you fucked diggy";
       }
     }
 
@@ -187,22 +194,33 @@
       // Ball collision with paddles (both player and opponent)
       if (ballX <= paddleWidth && ballY >= playerY && ballY <= playerY + paddleHeight) {
         ballSpeedX = -ballSpeedX;
+        ballSpeedY += (Math.random() - 0.5) * 4; // More random angle for a greater curve
         playerXP += 10; // Add 10 XP only when the player hits the ball
+        ballSpeedX *= 1.05; // Increase ball speed by 5% on player hit
+        ballSpeedY *= 1.05; // Increase ball speed by 5% on player hit
+        levelUpText = "fuck diggy"; // Default text when the player hits the ball
         showText = true; // Show text when the ball is hit
         textTimer = 60;  // Text will disappear after 60 frames
         levelUp(); // Check if player levels up
       } else if (ballX >= canvas.width - paddleWidth - ballSize && ballY >= opponentY && ballY <= opponentY + paddleHeight) {
         ballSpeedX = -ballSpeedX;
-        // Add XP for opponent hitting the ball as well (optional, if you want)
+        ballSpeedY += (Math.random() - 0.5) * 4; // More random angle for a greater curve
+        ballSpeedX *= 1.05; // Increase ball speed by 5% on opponent hit
+        ballSpeedY *= 1.05; // Increase ball speed by 5% on opponent hit
+        levelUpText = "fuck diggy"; // Default text when the opponent hits the ball
         showText = true; // Show text when the ball is hit
         textTimer = 60;  // Text will disappear after 60 frames
       }
 
-      // Ball out of bounds
+      // Ball out of bounds (score point)
       if (ballX <= 0 || ballX >= canvas.width) {
+        // Reset ball position to center
         ballX = canvas.width / 2;
         ballY = canvas.height / 2;
-        ballSpeedX = -ballSpeedX;
+
+        // Reset ball speed to default
+        ballSpeedX = defaultBallSpeedX;
+        ballSpeedY = defaultBallSpeedY;
       }
 
       // Draw the red ball
