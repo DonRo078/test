@@ -10,6 +10,7 @@
             background-color: black;
             color: white;
             font-family: Arial, sans-serif;
+            touch-action: none;
         }
         canvas {
             background: white;
@@ -18,26 +19,11 @@
             max-width: 100%;
             height: auto;
         }
-        .controls {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-        }
-        .button {
-            width: 50px;
-            height: 50px;
-            margin: 5px;
-            font-size: 20px;
-        }
     </style>
 </head>
 <body>
     <h1>Pong Game - Mila is lief! ❤️</h1>
     <canvas id="gameCanvas" width="800" height="400"></canvas>
-    <div class="controls">
-        <button class="button" id="up">⬆️</button>
-        <button class="button" id="down">⬇️</button>
-    </div>
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
@@ -47,7 +33,7 @@
         let paddleRightY = (canvas.height - paddleHeight) / 2;
         let ballX = canvas.width / 2, ballY = canvas.height / 2;
         let ballSpeedX = 5, ballSpeedY = 3;
-        let leftPaddleSpeed = 0;
+        let touchY = null;
 
         function drawRect(x, y, width, height, color) {
             ctx.fillStyle = color;
@@ -62,7 +48,9 @@
         }
 
         function update() {
-            paddleLeftY += leftPaddleSpeed;
+            if (touchY !== null) {
+                paddleLeftY = touchY - paddleHeight / 2;
+            }
             
             if (paddleLeftY < 0) paddleLeftY = 0;
             if (paddleLeftY > canvas.height - paddleHeight) paddleLeftY = canvas.height - paddleHeight;
@@ -105,19 +93,11 @@
             requestAnimationFrame(gameLoop);
         }
 
-        window.addEventListener("keydown", (e) => {
-            if (e.key === "w" || e.key === "ArrowUp") leftPaddleSpeed = -5;
-            if (e.key === "s" || e.key === "ArrowDown") leftPaddleSpeed = 5;
+        canvas.addEventListener("touchmove", (e) => {
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            touchY = touch.clientY - rect.top;
         });
-
-        window.addEventListener("keyup", (e) => {
-            if (e.key === "w" || e.key === "s" || e.key === "ArrowUp" || e.key === "ArrowDown") leftPaddleSpeed = 0;
-        });
-
-        document.getElementById("up").addEventListener("touchstart", () => leftPaddleSpeed = -5);
-        document.getElementById("down").addEventListener("touchstart", () => leftPaddleSpeed = 5);
-        document.getElementById("up").addEventListener("touchend", () => leftPaddleSpeed = 0);
-        document.getElementById("down").addEventListener("touchend", () => leftPaddleSpeed = 0);
 
         gameLoop();
     </script>
