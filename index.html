@@ -25,7 +25,7 @@
     </style>
 </head>
 <body>
-    <h1>Pong Game - Diggy is een NOOB</h1>
+    <h1>Pong Game - DonRo078 Edition</h1>
     <div id="stats">Level: <span id="level">1</span> | XP: <span id="xp">0</span></div>
     <canvas id="gameCanvas" width="800" height="400"></canvas>
     <script>
@@ -42,6 +42,8 @@
         let xp = 0;
         let level = 1;
         let upPressed = false, downPressed = false;
+
+        const borderWidth = 10;  // De breedte van de rand
 
         function drawRect(x, y, width, height, color) {
             ctx.fillStyle = color;
@@ -65,7 +67,10 @@
             ballX += ballSpeedX;
             ballY += ballSpeedY;
             
-            if (ballY < 0 || ballY > canvas.height) ballSpeedY = -ballSpeedY;
+            // Ball raakt de boven- of onderrand
+            if (ballY - 10 <= borderWidth || ballY + 10 >= canvas.height - borderWidth) {
+                ballSpeedY = -ballSpeedY;
+            }
             
             if (ballX < 20 && ballY > paddleLeftY && ballY < paddleLeftY + paddleHeight) {
                 ballSpeedX = -ballSpeedX;
@@ -97,7 +102,12 @@
         }
 
         function draw() {
-            drawRect(0, 0, canvas.width, canvas.height, "black");
+            // Rand tekenen
+            drawRect(0, 0, canvas.width, borderWidth, "white");  // Boven rand
+            drawRect(0, canvas.height - borderWidth, canvas.width, borderWidth, "white");  // Onder rand
+            drawRect(0, 0, borderWidth, canvas.height, "white");  // Linker rand
+            drawRect(canvas.width - borderWidth, 0, borderWidth, canvas.height, "white");  // Rechter rand
+            
             drawRect(10, paddleLeftY, paddleWidth, paddleHeight, "white");
             drawRect(canvas.width - 20, paddleRightY, paddleWidth, paddleHeight, "white");
             
